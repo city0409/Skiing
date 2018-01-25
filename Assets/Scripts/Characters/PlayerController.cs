@@ -58,7 +58,7 @@ public class PlayerController : Singleton<PlayerController>
     private void FixedUpdate()
     {
         //rig.velocity = new Vector2(speed, rig.velocity.y);
-        rig.AddForce(new Vector2(force, -force), ForceMode2D.Force);
+        rig.AddForce(new Vector2(force, -force*0.5f), ForceMode2D.Force);
 
         speed = Mathf.Clamp(Vector3.SqrMagnitude(rig.velocity), 0f, maxSpeed);
         rig.velocity = rig.velocity.normalized * speed;
@@ -75,7 +75,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void Jump()
     {
-        rig.AddForce(new Vector2(1f, 1f) * jumpForce,ForceMode2D.Impulse);
+        rig.AddForce(new Vector2(0.8f, 1f) * jumpForce,ForceMode2D.Impulse);
         currentState = State.Jump;
 
         //yield return new WaitForSeconds (0.5f);不需要用协程
