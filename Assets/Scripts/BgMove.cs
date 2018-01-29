@@ -25,8 +25,7 @@ public class BgMove : MonoBehaviour
     private int index;
     private void Awake()
     {
-        //rend = GetComponent<Renderer>();
-        //mat = rend.material;
+        
         dis = Pos2.position - Pos1.position;
         //PosCurrent = Pos1;
         PosTarget = Pos2;

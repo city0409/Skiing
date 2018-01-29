@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class SnowManController : MonoBehaviour
+public class SnowSlide : MonoBehaviour
 {
-    
+
     [SerializeField]
     private float maxSpeed = 2f;
     [SerializeField]
@@ -19,7 +19,7 @@ public class SnowManController : MonoBehaviour
         rig = GetComponent<Rigidbody2D>();
     }
 
-    private void  Update()
+    private void Update()
     {
         rig.AddForce(new Vector2(force, -force), ForceMode2D.Force);
 
@@ -29,11 +29,13 @@ public class SnowManController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+
         if (collision.gameObject.tag == "Player")
         {
-            PlasyerState.IsRideSnowMan=true;
-            Destroy(gameObject);
+            PlasyerState.IsLie=true;
+            //弹窗todo
+            Time.timeScale = 0f;
+            //Destroy(collision.gameObject);
         }
     }
 }
