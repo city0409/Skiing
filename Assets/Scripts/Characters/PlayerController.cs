@@ -29,11 +29,21 @@ public class PlayerController : Singleton<PlayerController>
 
 
     private bool isJumped;
+    private bool isRolled;
+
+    private Vector3 TowardsDown = new Vector3(-0.5f, -1f, 0);
+    private Vector3 TowardsUp = new Vector3(0.5f, 1f, 0);
+    private Vector3 TowardsLeft = new Vector3(-1f, 0.5f, 0);
+    private Vector3 TowardsRight = new Vector3(1f, -0.5f, 0);
 
     [SerializeField]
     private SnowManController snowMan;
     [SerializeField]
     private LayerMask layerMask;
+    [SerializeField]
+    private LayerMask layerMaskOther;
+
+    private Quaternion initRotation;
 
     protected override void Awake()
     {
@@ -46,13 +56,24 @@ public class PlayerController : Singleton<PlayerController>
     private void Start()
     {
         PlasyerState.IsSkiing = true;
-        print("123@@@"+PlasyerState.IsJump);
+
+        initRotation = transform.rotation;
     }
 
     private void Update()
     {
+        //print(playColl.bounds.extents.y);
         if (!isJumped)
+        {
             isJumped = Input.GetMouseButtonDown(0);
+            PlasyerState.IsRoll = false;
+
+            if (!isRolled)
+            {
+                isRolled = Input.GetMouseButtonDown(0);
+            }
+        }
+
 
         if (PlasyerState.IsRideSnowMan)
         {
@@ -62,7 +83,7 @@ public class PlayerController : Singleton<PlayerController>
         {
             Lie();
         }
-        //if (Input.GetMouseButtonDown(1) && currentState == State.Jump)
+        //if (Input.GetMouseButtonDown(1) &&   PlasyerState.IsRoll)
         //{
         //    StartCoroutine(Torque());
 
@@ -73,18 +94,32 @@ public class PlayerController : Singleton<PlayerController>
 
     private void FixedUpdate()
     {
-        print(PlasyerState.IsSkiing);
         if (isJumped && PlasyerState. IsSkiing==true )
         {
             Jump();
-            print(PlasyerState.IsSkiing);
+        }
+        if (isRolled && PlasyerState.IsRoll==true)
+        {
+            Roll();
         }
         //rig.velocity = new Vector2(speed, rig.velocity.y);
-        rig.AddForce(new Vector2(force, -force * 0.5f), ForceMode2D.Force);
+        if (!PlasyerState.IsLie )
+        {
+            rig.AddForce(new Vector2(force, -force * 0.5f), ForceMode2D.Force);
 
-        speed = Mathf.Clamp(Vector3.SqrMagnitude(rig.velocity), 0f, maxSpeed);
-        rig.velocity = rig.velocity.normalized * speed;
+            speed = Mathf.Clamp(Vector3.SqrMagnitude(rig.velocity), 0f, maxSpeed);
+
+            rig.velocity = rig.velocity.normalized * speed;
+        }
+        else if (PlasyerState.IsLie)
+        {
+            Debug.Log("躺下了");
+            rig.gravityScale = 0;
+
+        }
+        
         isJumped = false;
+        isRolled = false;
 
     }
 
@@ -106,9 +141,19 @@ public class PlayerController : Singleton<PlayerController>
         //yield return new WaitForSeconds (0.5f);不需要用协程
     }
 
+    private void Roll()
+    {
+        print("Roll");
+        rig.AddTorque(30);
+        PlasyerState.IsRoll = false;
+
+    }
+
     private void Lie()
     {
+        Debug.Log("Lie");
         rig.velocity = Vector3.zero;
+        transform.rotation = initRotation;
     }
 
     private IEnumerator Torque()
@@ -132,11 +177,15 @@ public class PlayerController : Singleton<PlayerController>
 
     private void DetacteRaycast()
     {
-        //Ray rayRight = new Ray(transform.position, Vector3.right);
-        //Ray rayLeft = new Ray(transform.position, Vector3.left );
-        Ray rayDown = new Ray(transform.position, Vector3.down);
-        RaycastHit2D rayDownHit = Physics2D.Raycast(transform.position, Vector3.down, 0.6f, layerMask);
-        if (rayDownHit && (rayDownHit.collider.gameObject.layer == 8 || rayDownHit.collider.gameObject.layer == 9))
+        Ray rayRight = new Ray(transform.position, TowardsRight);
+        Ray rayLeft = new Ray(transform.position, TowardsLeft);
+        Ray rayUp = new Ray(transform.position, TowardsUp);
+        Ray rayDown = new Ray(transform.position, TowardsDown);
+        RaycastHit2D rayDownHit = Physics2D.Raycast(transform.position, TowardsDown, 0.6f, layerMask);
+        RaycastHit2D rayUpHit = Physics2D.Raycast(transform.position,Vector2.up , 0.6f, layerMask);//射线不动啊
+        RaycastHit2D rayLeftHit = Physics2D.Raycast(transform.position, TowardsLeft, 0.6f, layerMaskOther);
+        RaycastHit2D rayRightHit = Physics2D.Raycast(transform.position, TowardsRight,1f, layerMaskOther);
+        if (rayDownHit && (rayDownHit.collider.gameObject.layer == 8 /*|| rayDownHit.collider.gameObject.layer == 9*/))
         {
             PlasyerState.IsSkiing=true ;
             PlasyerState.IsJump = false;
@@ -144,13 +193,29 @@ public class PlayerController : Singleton<PlayerController>
         else if (rayDownHit == false)
         {
             PlasyerState.IsJump = false ;
+            PlasyerState.IsRoll = true;
+
+        }
+
+         if (rayUpHit.collider !=null )
+        {
+            Debug.Log("jiance");
+            PlasyerState.IsJump = false;
+            PlasyerState.IsLie = true;
         }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * 1f);
+        Gizmos.DrawLine(transform.position, transform.position + TowardsDown * 1f);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + TowardsUp * 1f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + TowardsLeft * 1f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position + TowardsRight * 1f);
+
     }
 
 }
