@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class LevelDirector : Singleton<LevelDirector>
 {
+    [SerializeField]
+    private PlayerController player;
+    public PlayerController Player { get { return player; } set { player = value; } }
+    
 
     private int score;
     public int Score{get { return score; }set{score = value;}}
@@ -12,8 +16,9 @@ public class LevelDirector : Singleton<LevelDirector>
 
     private void Start () 
 	{
-		
-	}
+        //player = GetComponent<PlayerController>();
+        player.MyState.IsSkiing = true;
+    }
 	
 	private void Update () 
 	{

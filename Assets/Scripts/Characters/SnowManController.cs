@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class SnowManController : MonoBehaviour
 {
-    
+    private LevelDirector levelDirector;
+
     [SerializeField]
     private float maxSpeed = 2f;
     [SerializeField]
@@ -32,7 +33,7 @@ public class SnowManController : MonoBehaviour
         
         if (collision.gameObject.tag == "Player")
         {
-            PlasyerState.IsRideSnowMan=true;
+            levelDirector.Player.MyState.IsRideSnowMan=true;
             Destroy(gameObject);
         }
     }
