@@ -58,10 +58,10 @@ public class PlayerController : Singleton<PlayerController>
                 m_Roll = Input.GetMouseButtonDown(0);
         }
 
-        if (myState.IsRideSnowMan)
-        {
-            GoYou();
-        }
+        //if (myState.IsRideSnowMan)
+        //{
+        //    GoYou();
+        //}
       
         DetacteRaycast();
     }
@@ -81,14 +81,14 @@ public class PlayerController : Singleton<PlayerController>
 
     }
 
-    private void GoYou()
-    {
-        visual1.SetActive(false);
-        visual2.SetActive(true);
-        playColl.offset = new Vector2(0f, 0.34f);
-        playColl.size = new Vector2(1.02f, 1.68f);
-        myState.IsSkiing = true;
-    }
+    //private void GoYou()
+    //{
+    //    visual1.SetActive(false);
+    //    visual2.SetActive(true);
+    //    playColl.offset = new Vector2(0f, 0.34f);
+    //    playColl.size = new Vector2(1.02f, 1.68f);
+    //    myState.IsSkiing = true;
+    //}
 
     private void DetacteRaycast()
     {
@@ -98,21 +98,30 @@ public class PlayerController : Singleton<PlayerController>
         RaycastHit2D rayRightHit = Physics2D.Raycast(transform.position, TowardsRight,1f, layerMaskOther);
         if (rayDownHit && (rayDownHit.collider.gameObject.layer == 8 /*|| rayDownHit.collider.gameObject.layer == 9*/))
         {
-            myState.IsSkiing=true ;
-            myState.IsJump = false;
+            //myState.IsSkiing=true ;
+            //myState.IsJump = false;
+
+            myState.IsGround = true;
         }
         else if (rayDownHit == false)
         {
-            myState.IsJump = false ;
-            myState.IsRoll = true;
+            myState.IsGround = false;
+            
         }
 
          if (rayUpHit.collider !=null )
         {
             Debug.Log("jiance");
-            myState.IsJump = false;
-            myState.IsLie = true;
+            //myState.IsJump = false;
+            //myState.IsLie = true;
         }
+
+        SlipDetacte();
+    }
+
+    //判断是否滑倒了
+    private void SlipDetacte() {
+        MyState.IsLie = Vector3.Dot(transform.up, TowardsDown) >= 0;
     }
 
     private void OnDrawGizmos()

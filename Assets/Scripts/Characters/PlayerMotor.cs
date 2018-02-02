@@ -37,8 +37,8 @@ public class PlayerMotor : MonoBehaviour
         if (m_Jump && controller.MyState.IsSkiing == true)
         {
             rig.AddForce(new Vector2(0, jumpForce ), ForceMode2D.Impulse);
-            controller.MyState.IsSkiing = false;
-            controller.MyState.IsJump = true;
+            //controller.MyState.IsSkiing = false;
+            //controller.MyState.IsJump = true;
             if (m_Roll && controller.MyState.IsRoll == true)
             {
                 Roll();
@@ -54,7 +54,7 @@ public class PlayerMotor : MonoBehaviour
     private void Roll()
     {
         Debug.Log("Roll");
-        rig.AddTorque(30);
+        //rig.AddTorque(30);
         controller.MyState.IsRoll = false;
     }
 
