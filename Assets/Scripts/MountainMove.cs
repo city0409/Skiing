@@ -7,7 +7,7 @@ public class MountainMove : MonoBehaviour
     private Material mat;
     private Renderer rend;
     [SerializeField]
-    private PlayerMotor Player;
+    private PlayerController Player;
 
     private void Awake()
     {
@@ -17,6 +17,6 @@ public class MountainMove : MonoBehaviour
 
     private void Update()
     {
-        mat.mainTextureOffset += new Vector2(Time.deltaTime * Player.Speed / 100, 0f);
+        mat.mainTextureOffset += new Vector2(Time.deltaTime * Player.speed / 100, 0f);
     }
 }

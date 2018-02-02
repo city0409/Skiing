@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SnowSlide : MonoBehaviour
 {
-    private LevelDirector levelDirector;
+
     [SerializeField]
     private float maxSpeed = 2f;
     [SerializeField]
@@ -32,7 +32,7 @@ public class SnowSlide : MonoBehaviour
 
         if (collision.gameObject.tag == "Player")
         {
-            levelDirector.Player.MyState.IsLie=true;
+            PlasyerState.IsLie=true;
             //弹窗todo
             Time.timeScale = 0f;
             //Destroy(collision.gameObject);
